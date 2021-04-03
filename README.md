@@ -10,6 +10,13 @@ This repo is for a group project for MTH416A : Regression Analysis at IIT Kanpur
 
 ## Tentative Plan for the Project
 
+0. Preliminaries :
+    - structure of the data-set 
+    - summary of the data-set
+    - Fitting a linear model with all the variables and summarize (**Model 0**)
+    - Scatterplot Matrix
+    - Basic Plots based on **Model 0**
+
 1. Outliers (O) and Influential Points (IP) :
      + Detection :
         -  Cooks Distance (IP)
