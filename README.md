@@ -16,7 +16,6 @@ This repo is for a group project for MTH416A : Regression Analysis at IIT Kanpur
     - Fitting a linear model with all the variables and summarize (**Model 0**)
     - Scatterplot Matrix
     - Basic Plots based on **Model 0**
-
 1. Outliers (O) and Influential Points (IP) :
      + Detection :
         -  Cooks Distance (IP)
@@ -53,7 +52,7 @@ This repo is for a group project for MTH416A : Regression Analysis at IIT Kanpur
          - Shapiro-Wilks Test
 6. Autocorrelation :
      + Detection :
-         - $\epsilon_t$ vs $\epsilon_{t-1}$ plot
+         -  $ \epsilon_t $ vs $ \epsilon_{t-1} $ plot
          - Durbin-Watson Test
      + Remedy :
          - Assume AR(1) model for errors and estimate AR parameter $\rho$ using -
