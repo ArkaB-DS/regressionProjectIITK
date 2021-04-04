@@ -6,8 +6,7 @@ data(ozone,package="faraway") # loading the dataset in R
 # changing the variable doy to day and taking modulo 365 
 ozone<-data.frame(ozone[,-10],"day"=ozone[,10]%%365)
 ozone<-as.data.frame(rbind(ozone[307:330,],ozone[1:306,]))
-#test data - 70%
-#ozone<-ozone[1:231,]
+#test data - 70%=>1:231
 ---------------------------------------------------------
 #0 Basic Analysis
 str(ozone) # structure of the dataset
@@ -16,7 +15,7 @@ install.packages("Hmisc") # library for plotting the histograms of all the varia
 library(Hmisc) # load the installed package
 par(mfrow=c(2,5))# create a 2x5 window for next 10 plots
 hist.data.frame(ozone,freq=FALSE) # plot the histgrams
-lmod0<-lm(O3~.,data=ozone[1:231]) # Model 0
+lmod0<-lm(O3~.,data=ozone[1:231,]) # Model 0
 par(mfrow=c(2,2)) # create a 2x2 window for next 4 plots
 plot(lmod0) # 4 plots
 summary(lmod0) # summary of Model 0
@@ -40,7 +39,7 @@ pairs(formula=O3~.,data=ozone[1:231,]) # scatterplot matrix of all variables
 install.packages("mctest")
 library(mctest)
 eigprop(lmod0) # variance decompostion proportion 
-##gives vh, temp, ibt and doy as correlated
+##gives vh, wind, humidity,dpg, temp, ibt and vis as correlated
 
 install.packages("car")
 library(car)
@@ -62,9 +61,9 @@ lmodA<-lm(O3~.-ibt-vh,data=ozone[1:231,])
 ## Ridge Regression
 install.packages("lmridge")
 library(lmridge)
-lmodB<-lmridge(O3~wind+humidity+temp+ibh+dpg+vis+day,
-data=ozone[1:231,],K=seq(0,0.2,1e-3)) # K=0.0404
-plot(lmodB)
+#lmodB<-lmridge(O3~wind+humidity+temp+ibh+dpg+vis+day,
+#data=ozone[1:231,],K=seq(0,0.2,1e-3)) # K=0.0404
+#plot(lmodB)
 lmodB<-lmridge(O3~wind+humidity+temp+ibh+dpg+vis+day,
 data=ozone[1:231,],K=0.0404)
 summary(lmodB)
@@ -121,9 +120,13 @@ lmodC<-lm(ozone[1:231,]$O3~PC1+PC2+PC3,data=data.frame(pcr$x))
 summary(lmodC)$r.squared
 ---------------------------------------------------
 # heteroscedasticity
+install.packages("lmtest")
+library(lmtest)
 ## for Model A
 bptest(lmodA) # Breusch-Pagan test
 ## rejected
+install.packages("MASS")
+library(MASS)
 ans<-boxcox(lmodA)
 lambda<-ans$x[which(ans$y==max(ans$y))]
 #lambda<-0.2626263
@@ -147,7 +150,7 @@ bptest(lmodC) # Breusch-Pagan test
 ## rejected
 ans<-boxcox(lmodC)
 lambda<-ans$x[which(ans$y==max(ans$y))]
-lambda<-.5
+#lambda<-.303030
 lmodC<-lm(((ozone[1:231,]$O3^lambda-1)/lambda)~PC1+PC2+PC3,data=data.frame(pcr$x))
 summary(lmodC)$r.squared
 bptest(lmodC) # accepted
@@ -156,15 +159,15 @@ bptest(lmodC) # accepted
 # for model A
 qqnorm(residuals(lmodA)) ## Q-Q Plot
 qqline(residuals(lmodA))
-shapiro.test(residuals(lmodA)) # accpeted
+shapiro.test(residuals(lmodA)) # accepted
 # for model B
 qqnorm(residuals(lmodB)) ## Q-Q Plot
 qqline(residuals(lmodB))
-shapiro.test(residuals(lmodB)) # accpeted
+shapiro.test(residuals(lmodB)) # accepted
 # for model C
 qqnorm(residuals(lmodC)) ## Q-Q Plot
 qqline(residuals(lmodC))
-shapiro.test(residuals(lmodC)) # accpeted
+shapiro.test(residuals(lmodC)) # accepted
 --------------------------------------- do till here
 ## autocorrelation
 install.packages("lmtest")
@@ -219,13 +222,12 @@ y<-(y^.22-1)/.22
 y_pred<-predict(lmodB,ozone[232:330,-1],
 type="response")
 (RMSE<-sqrt(mean((y-y_pred)^2)))
-plot(1:99,y_pred,type="o",col="blue",ylim=c(0,11))
+plot(1:99,y_pred,type="o",col="blue",ylim=c(0,8))
 lines(x=1:99,y,col="red",type="o")
 
 # for model C
 y<-ozone[232:330,1]
-y<-(y^0.5-1)/0.5
-
+y<-(y^0.3-1)/0.3
 pcr<-prcomp(ozone[232:330,-1],center=T,scale=T)
 Data<-data.frame(pcr$x)[,c(1,2,3)]
 y_pred<-predict(lmodC,Data,
@@ -235,7 +237,7 @@ plot(1:99,y_pred,type="o",col="blue",ylim=c(0,10))
 lines(x=1:99,y,col="red",type="o")
 
 
--------------------------------------------------------
+-------------------------------------------------------ignore below
 
 
 AR<-arima(ozone[1:231,1],
@@ -243,7 +245,6 @@ c(11,0,0),xreg=ozone[1:231,c(4,5,6,9,10)])
 pacf(residuals(AR))
 (d = sum((AR$residuals - lag(AR$residuals))^2, na.rm = TRUE) /
 sum(AR$residuals^2, na.rm = TRUE))
-(1-d/2)*sqrt(231/(1-(231*.3865^2))) ## durbin's h-statistic s not defined
 
 y_pred<-predict(AR,n.ahead=99,newxreg=ozone[232:330,c(4,5,6,9,10)])$pred
 (RMSE<-sqrt(mean((y-y_pred)^2)))
@@ -254,7 +255,6 @@ plot(ozone[1:231,1],type="l",col="red",,ylim=c(-5,40))
 lines(fitted(AR),type="l",col="blue",ylim=c(-5,40))
 lines(fitted(lmodA),type="l",col="seagreen",,ylim=c(-5,40))
 
-plot(ozone[1:231,1],type="l",col="red")
-lines(fitted(lmodA),col="blue")
 
-pairs(ozone[,c(1,4,5,6,9,10)])
+
+
