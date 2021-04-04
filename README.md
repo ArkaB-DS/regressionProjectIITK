@@ -25,7 +25,7 @@ This repo is for a group project for MTH416A : Regression Analysis at IIT Kanpur
      + Remedy : 
 2. Multicollinearity :
      + Detection :
-       - Pairs Plot
+       - Scatterplot Matrix
        - Variance Inflation Factor (VIF)
        - Variance Decompostion Proportion
      + Remedy :
@@ -35,13 +35,13 @@ This repo is for a group project for MTH416A : Regression Analysis at IIT Kanpur
        - LASSO (**Model D** - *BONUS*)
        - Elastic Net (**Model E** - *BONUS*)
 3. Variable Selection :
-     - Stepwise Regression
      - Plot AIC vs P
+     - Stepwise Regression
 4. Homoscedasticity of Errors :
      + Detection :
          - Residual vs Fitted Plot
-         - Goldfeld-Quandt Test
-         - Glejser Test
+         - Goldfeld-Quandt Test (*optional*)
+         - Glejser Test (*optional*)
          - Breusch-Pagan Test
      + Remedy :
          - Box-Cox Transformation
@@ -52,11 +52,15 @@ This repo is for a group project for MTH416A : Regression Analysis at IIT Kanpur
          - Shapiro-Wilks Test
 6. Autocorrelation :
      + Detection :
-         -  $ \epsilon_t $ vs $ \epsilon_{t-1} $ plot
+         -  $\epsilon_t$ vs $\epsilon_{t-1}$ plot
          - Durbin-Watson Test
      + Remedy :
          - Assume AR(1) model for errors and estimate AR parameter $\rho$ using -
                * Cochrane-Orcutt Method
                * Prais-Winsten Method
  7. Prediction :       
-     Compare the models A, B and C based on RMSE.
+     + Compare the models A, B and C based on RMSE.
+ 
+ ### BONUS :
+  * Apply **Alternating Conditional Expectation(ACE)** algorithm on the **ozone** dataset and repeat all steps 0 through 7, whatever is applicable.
+  * Apply **Multivariate Adaptive Regression Splines(MARS)** algorithm on the **ozone** dataset and repeat all steps 0 through 7, whatever is applicable.
