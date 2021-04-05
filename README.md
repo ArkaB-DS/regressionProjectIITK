@@ -56,8 +56,8 @@ This repo is for a group project for MTH416A : Regression Analysis at IIT Kanpur
          - Durbin-Watson Test
      + Remedy :
          - Assume AR(1) model for errors and estimate AR parameter $\rho$ using -
-               * Cochrane-Orcutt Method
-               * Prais-Winsten Method
+              * Cochrane-Orcutt Method
+              * Prais-Winsten Method
  7. Prediction :       
      + Compare the models A, B and C based on RMSE.
  
