@@ -2,10 +2,10 @@
 This repo is for a group project for MTH416A : Regression Analysis at IIT Kanpur
 
 ## Group Members : 
-  - Arkajyoti Bhattacharjee
-  - Vishweshwar Tyagi
-  - Saurab Jain
-  - Jetti Ramya Chowdary
+  - [Arkajyoti Bhattacharjee](https://github.com/ArkaB-DS)
+  - [Vishweshwar Tyagi](https://github.com/vishweshwartyagi)
+  - [Saurab Jain](https://github.com/jnsaurab)
+  - [Jetti Ramya Chowdary](https://github.com/JETTIRAMYA)
   - Apoorva Singh
 
 ## Tentative Plan for the Project
