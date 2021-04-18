@@ -1,0 +1,49 @@
+---
+title: |
+  Ozone concentration and meteorology in the LA Basin,1976 - A Regression Study
+author: 
+  - Arkajyoti Bhattacharjee
+  - Vishweshwar Tyagi
+  - Saurab Jain
+  - Apporva Singh
+date: |
+  ![](C:\Users\ARKAJYOTI\Desktop\IITK_logo.png)
+output: 
+  beamer_presentation:
+    slide_level: 3
+    theme: "warsaw"
+    colortheme: "rose"
+    fonttheme: "structurebold"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# Aim of the Study
+
+Treat this as abstract. Write from proposal what we basically do in this project   
+test
+
+# The Ozone Dataset    
+
+## Data description  
+
+### about the data  
+
+# Explorartory Analysis  
+
+###The summary statistics , model plots and scatterplot matrix
+
+# Multicollinearity
+We deal with this first  
+
+## Variable Drop
+method1  
+
+## Ridge Regression
+method 2  
+
+## Principal Components Regression
+method3  
+
