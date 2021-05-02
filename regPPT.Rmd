@@ -1,0 +1,613 @@
+---
+title: |
+  Ozone concentration and meteorology in the LA Basin,1976 - A Regression Study
+author: |
+  | Arkajyoti Bhattacharjee
+  | Vishweshwar Tyagi
+  | Saurab Jain
+  | Apoorva Singh
+date: \Large \textcolor{blue}{ Indian Institute of Technology, Kanpur }
+output:
+  beamer_presentation:
+    slide_level: 3
+    theme: pittsburgh
+    colortheme: crane
+  slidy_presentation: 
+    theme: "cerulean"
+    hihlight: "tango"
+fontsize: "\tiny"
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# About the project
+
+### Aim of the Study
+
+* understand the relationship between **Ozone concentration** and meteorological variables like **temperature**, **pressure**, **humidity**, etc.
+* develop **parametric** and **non-parametric** models to be able to **predict** ozone concentration based on given values of the meteorological variables.
+
+### What we have done
+
+* fitted various regression models while **detecting** and taking **remedial measures** for the problems of
+**multi-collinearity**, **heteroscedasticity** and **auto-correlation** of **errors**. 
+* compared the **predictive power** of the models developed in the process by compairing the Root Mean Square Error(**RMSE**) of the
+model.
+
+# The Ozone Dataset and Exploratory Analysis    
+
+### Data description 
+
+* **Ozone in Los Angeles Basin in 1976** dataset. 
+  +  historical time-series data. 
+  + **330** observations and **10** variables.
+
+* variables associated with this dataset -
+  + **O3:** Ozone conc., ppm, at Sandbug AFB. 
+  + **vh:** a numeric vector  
+  + **wind:** wind speed  
+  + **humidity:** a numeric vector  
+  + **temp:** temperature  
+  + **ibh:** inversion base height  
+  + **dpg:** Daggett pressure gradient  
+  + **ibt:** a numeric vector  
+  + **vis:** visibility  
+  + **doy:** day of the year  
+  
+* Here, **O3** is the response variable and the remaining are potential regressors.
+
+### Data Summary
+
+\tiny
+```{r echo=FALSE,message=FALSE}
+data(ozone,package="faraway")
+ozone<-data.frame(ozone[,-10],doy=ozone[,10]%%365+1)
+ozone<-as.data.frame(rbind(ozone[307:330,],ozone[1:306,]))
+summary(ozone)
+```
+
+### Histograms of the Variables
+
+```{r echo=FALSE,message=FALSE}
+library(Hmisc) 
+par(mfrow=c(4,4))
+hist.data.frame(ozone,freq=FALSE)
+```
+
+### Parametric Model Setup : Model Assumptions
+
+\tiny
+* we first fit a multiple linear regression model to the data, with **O3** as the response and all other variables as regressors.  
+
+* The model is given by :
+$$O_3=\beta_0+\beta_1vh+\beta_2humidity+\beta_3wind+\beta_4temp+\beta_5dpg+\beta_6ibt+\beta_7ibh+\beta_8doy+\beta_9vis+\epsilon$$
+
+* assume a Gauss-Markov set-up i.e. we make the following assumptions:
+  1. $E(\epsilon)=0$
+  2. $var(\epsilon)=\sigma^2I$ i.e.   
+    2.1.  $var(\epsilon_i)=\sigma^2\,\,\forall\ i$  
+    2.2.  $cov(\epsilon_i,\epsilon_j)=0 \,\,\forall\,\, i\not=j$  
+* for testing purposes, we assume
+   3.  $\epsilon\sim N(0,\sigma^2I)$
+
+### Model 0 and Basic Diagnostic Plots
+
+\tiny
+```{r echo=FALSE}
+lmod0<-lm(O3~.,data=ozone[1:300,]) 
+par(mfrow=c(2,2)) 
+plot(lmod0) 
+```
+
+### Summary of Model 0
+
+\tiny
+```{r echo=FALSE}
+summary(lmod0) 
+```
+
+### Remarks based on Graphs and Summary of Model 0
+
+* based on the graphs, we observe -
+  * \tiny There is curvature in the **residual vs fitted plot** indicating a **non-linear** relationship in the data-set.
+  * There is **heteroscedasticity** in the data as the residuals do not form a constant band.
+  * The **normal  Q-Q** plot shows a fairly straight line, indicating the errors are more-or-less **normally distributed**.
+  * $17$, $53$, $258$ and $220^{th}$ observations may need special attention.
+  
+* based on the summary of the fitted model, we observe -  
+  * \tiny The **Multiple R-squared** of the model is: **0.6986** and the **Adjusted R-squared** is: **0.6892**.
+  * Since the errors seem to follow normal distribution based on **Q-Q** plot, so taking level of significance to be $0.01$, only **humidity** and **temperature** seem to be *statistically significant* based on their p-values.
+ 
+# Multicollinearity
+
+### Scatterplot Matrix
+
+\tiny
+```{r echo=FALSE}
+pairs(O3~.,data=ozone[1:300,],col="seagreen")
+```
+
+### Remarks
+
+Based on the **scatterplot matrix**, we observe -
+ 
+* **vh** and **temp** seem to be almost perfectly **positively correlated** 
+* **temp** and **ibt** seem to be almost perfectly **positively correlated**
+* As expected from the above two points, **vh** and **ibt** seem to be almost perfectly **positively correlated**
+* **dpg** and **doy** have a somewhat quadratic relationship
+* **temp** and **doy** have a somewhat quadratic relationship
+
+### Eigen-Decomposition Proportion(EDP)
+
+\tiny
+```{r echo=FALSE,message=FALSE}
+library(mctest)
+eigprop(lm(O3~.-1,data=ozone[1:300,]) ) 
+```
+
+### Variance Inflation Factors(VIFs) and Remarks
+
+\tiny
+```{r echo=FALSE,message=FALSE}
+library(car)
+vif(lmod0) 
+```
+
+*  **wind**, **temp**, **humidity**, **ibt** and **doy** have variance decompositon proportion greater than 0.50.
+* **vh**, **temp** and **ibt** have **VIFs>5.** 
+
+### Variable Drop(Model A)
+
+\tiny
+```{r echo=FALSE}
+(lmodA<-lm(O3~.-ibt-vh,data=ozone[1:300,]))
+vif(lm(O3~.-vh-ibt,data=ozone[1:300,])) 
+cat("The R^2 value of lmodA is : ",summary(lm(O3~.-vh-ibt,data=ozone[1:300,]))$r.squared)
+```
+
+### Scatterplot Matrix after Variable Drop
+
+```{r echo=FALSE}
+ pairs(ozone[,c(1,3,4,5,6,7,9,10)],col="brown")
+```
+
+### Remarks for Model A
+
+We make the following observations based on the above scatterplot matrix -   
+
+* There is a quadratic relationship between **temp** and **doy**. This is expected as temperature increases in the middle of the year and is lower elsewhere.
+* A similar relationship seems to exist between **dpg** and **doy** 
+
+### Ridge Regression(Model B)
+
+\tiny
+```{r echo=FALSE,message=FALSE}
+library(lmridge)
+lmodB<-lmridge(O3~vh+wind+humidity+temp+ibh+dpg+vis+doy+ibt,
+data=ozone[1:300,],K=seq(0,0.09,1e-3)) 
+plot(lmodB)
+``` 
+
+### Model B: Summary and VIFs
+
+\tiny
+```{r echo=FALSE,message=FALSE}
+lmodB<-lmridge(O3~vh+wind+humidity+temp+ibh+dpg+vis+doy+ibt,
+data=ozone[1:300,],K=0.031)
+summary(lmodB)
+vif(lmodB)
+```
+
+### Principal Components Regression(Model C)
+
+\tiny
+```{r echo=FALSE}
+pcr<-prcomp(ozone[c(1:300),-1],center=TRUE,scale=TRUE)
+summary(pcr)
+Data<-data.frame("O3"=ozone[1:300,1],pcr$x)
+lmodC<-lm(O3~.,data=Data)
+```
+
+### Model C: Summary, Regression Coefficients and VIFs
+
+\tiny
+```{r echo=FALSE}
+detach("package:lmridge",character.only=TRUE)
+summary(lmodC)
+cat("The model parameter estimates are\n",as.vector(pcr$rotation%*%coef(lmodC)[-1]))
+vif(lmodC)
+```
+# Variable Selection
+
+### Model A
+
+\tiny
+```{r echo=FALSE,fig.height=3,fig.width=6}
+library(leaps)
+b <- regsubsets(x=model.matrix(lmodA)[,-1],y=ozone[1:300,1])
+rs <- summary(b)
+rs$which
+cat("Mallows Cp value for p in 1 to 7: ",round(rs$cp,3))
+cat("Adjusted R^2 value for p in 1 to 7: ",round(rs$adjr2,3))
+AIC <- 300*log(rs$rss/300) + (2:8)*2
+plot(AIC ~ I(1:7), ylab="AIC", xlab="Number of Predictors",
+type="l",col="blue",lwd=2)
+```
+
+### Remarks for Model A
+
+\tiny
+* Based on the **AIC vs p** plot, we see that for **4** regressors, the **AIC** is minimum. 
+* corresponding to **4**, we have **humidity**, **ibh**, **temp** and **vis** as regressors.
+```{r echo=FALSE}
+lmodA<-lm(O3~humidity+temp+ibh+vis,data=ozone[c(1:300),])
+summary(lmodA)
+```
+### Model B
+
+\tiny
+```{r echo=FALSE,fig.height=3,fig.width=6}
+library(leaps)
+b <- regsubsets(x=lmodB$xs,y=lmodB$y)
+rs <- summary(b)
+rs$which
+cat("Mallows Cp value for p in 1 to 8: ",round(rs$cp,3))
+cat("Adjusted R^2 value for p in 1 to 8: ",round(rs$adjr2,3))
+AIC <- 300*log(rs$rss/300) + (2:9)*2
+plot(AIC ~ I(1:8), ylab="AIC", xlab="Number of Predictors",
+type="l",col="magenta",lwd=2)
+```
+### Ridge complexity Parameter K
+\tiny
+```{r echo=FALSE}
+library(lmridge)
+lmodB<-lmridge(O3~ibh+humidity+temp+vis,
+data=ozone[1:300,],K=seq(0,0.3,1e-3)) 
+plot(lmodB)
+```
+
+### Model B: Summary
+\tiny
+```{r echo=FALSE}
+lmodB<-lmridge(O3~humidity+temp+ibh+vis,
+data=ozone[1:300,],K=0.018) 
+summary(lmodB)
+```
+
+### Model C: Scree Plot and Validation Plot
+
+\tiny
+```{r echo=FALSE,message=FALSE}
+par(mfrow=c(1,2))
+plot(pcr,type="l",col=rainbow(9),lwd=2)
+library(pls)
+PCR<-pcr(O3~.,data=ozone[1:300,],scale=TRUE)
+validationplot(PCR,val.type = "R2",
+type="o",col="seagreen",lwd=2)
+```
+
+### Model C: Remarks and $R^2$
+
+
+* **scree-plot** gives us the indication of taking the first 4 PCs, as the elbow formation occurs at the $4^{th}$ PC till the $5^{th}$ PC.
+* **validation plot**(validated by $R^2$) shows the cumulative amount of variation in $Y$ explained by the PCs is mostly done by the first PC, with a slight increase with all the first 4 PCs.
+
+```{r echo=FALSE}
+lmodC<-lm(O3~PC1+PC2+PC3+PC4,data=Data)
+cat("The value of R^2 taking first 4 PCs is : ",summary(lmodC)$r.squared)
+```
+# Heteroscedasticity, Normality and Autocorrelation of Errors
+ 
+## Heteroscedasticity of Errors: Breusch-Pagan(BP) Test and Box-Cox Transformation
+
+### Model A: BP Test
+
+```{r echo=FALSE,message=FALSE}
+library(lmtest)
+bptest(lmodA) 
+```
+* the test gets rejected i.e. the *errors are not homoscedastic* based on the data.
+
+### Model A: Box-Cox Transform
+\tiny
+```{r echo=FALSE,fig.height=5,fig.width=5}
+library(MASS)
+ans<-boxcox(lmodA)
+lambdaA<-ans$x[which(ans$y==max(ans$y))]
+cat("The value of the box-cox paramter is : ",lambdaA)
+lmodA<-lm(((O3^lambdaA-1)/lambdaA)~humidity+temp+ibh+vis,data=ozone[1:300,])
+```
+### Model A: BP Test and Summary of transformed model
+
+\tiny
+```{r echo=FALSE}
+summary(lmodA)
+bptest(lmodA) 
+```
+* The transformed model exhibits *homoscedasticity*
+
+### Model B: BP Test
+
+```{r echo=FALSE,message=FALSE}
+bptest(lmodB) 
+```
+* the test gets rejected i.e. the *errors are not homoscedastic* based on the data.
+
+### Model B: Box-Cox Transform and Ridge complexity Parameter 
+\tiny
+
+```{r echo=FALSE}
+lambdaB<-0.3
+lmodB<-lmridge(((O3^lambdaB-1)/lambdaB)~vis+humidity+temp+ibh,
+data=ozone[1:300,],K=seq(0,.3,1e-3)) 
+plot(lmodB)
+```
+
+### Model B: BP Test and Summary of transformed model
+
+\tiny
+```{r echo=FALSE}
+lmodB<-lmridge(((O3^lambdaB-1)/lambdaB)~vis+humidity+temp+ibh,
+data=ozone[1:300,],K=0.017) 
+summary(lmodB)
+bptest(lmodB) 
+```
+* The transformed model exhibits *homoscedasticity*
+
+
+### Model C: BP Test
+
+```{r echo=FALSE,message=FALSE}
+library(lmtest)
+bptest(lmodC) 
+```
+* the test gets rejected i.e. the *errors are not homoscedastic* based on the data.
+
+### Model C: Box-Cox Transform
+\tiny
+```{r echo=FALSE,fig.height=5,fig.width=5}
+ans<-boxcox(lmodC)
+lambdaC<-ans$x[which(ans$y==max(ans$y))]
+cat("The value of the box-cox paramter is : ",lambdaC)
+lmodC<-lm(((O3^lambdaC-1)/lambdaC)~humidity+temp+ibh+vis,data=ozone[1:300,])
+```
+### Model C: BP Test and $R^2$ of transformed model
+
+```{r echo=FALSE}
+bptest(lmodA) 
+cat("The R^2 value of the transformed model is : ", summary(lmodC)$r.squared)
+```
+* The transformed model exhibits *homoscedasticity* 
+
+## Normality of Errors
+
+### Model A: Normal Q-Q Plot and Shapiro-Wilks Test
+\tiny
+```{r echo=FALSE,fig.height=3,fig.width=5}
+qqnorm(residuals(lmodA),col="pink",lwd=2) 
+qqline(residuals(lmodA),col="brown",lwd=2)
+shapiro.test(residuals(lmodA)) 
+```
+
+### Model B: Normal Q-Q Plot and Shapiro-Wilks Test
+\tiny
+```{r echo=FALSE,fig.height=3,fig.width=5}
+qqnorm(residuals(lmodB),col="orange",lwd=2) 
+qqline(residuals(lmodB),col="blue",lwd=2)
+shapiro.test(residuals(lmodB)) 
+```
+### Model C: Normal Q-Q Plot and Shapiro-Wilks Test
+\tiny
+```{r echo=FALSE,fig.height=3,fig.width=6}
+qqnorm(residuals(lmodC),col="yellow",lwd=2) 
+qqline(residuals(lmodC),col="darkgreen",lwd=2)
+shapiro.test(residuals(lmodC)) 
+```
+* The errors are normally distributed based on the data and the above models
+
+## Autocorrelation of Errors
+
+## Detection of Autocorrelation: $\epsilon_t\,\,vs.\,\,\epsilon_{t-1}$ Plot and Durbin-watson(DW) Test
+
+### Model A
+\tiny
+```{r echo=FALSE,fig.height=3,fig.width=5}
+plot(residuals(lmodA)[-1],residuals(lmodA)[-length(residuals(lmodA))],
+xlab=expression(epsilon[t-1]),ylab=expression(epsilon[t]),
+pch=13,col="red")
+abline(lm(residuals(lmodA)[-length(residuals(lmodA))]~
+residuals(lmodA)[-1]),lty=2,lwd=2,col="blue")
+dwtest(lmodA) 
+```
+
+### Model B
+\tiny
+```{r echo=FALSE,fig.height=3,fig.width=5}
+plot(residuals(lmodB)[-1],residuals(lmodB)[-length(residuals(lmodB))],
+xlab=expression(epsilon[t-1]),ylab=expression(epsilon[t]),
+pch=13,col="brown")
+abline(lm(residuals(lmodB)[-length(residuals(lmodB))]~
+residuals(lmodB)[-1]),lty=2,lwd=2,col="cyan")
+dwtest(lmodB) 
+```
+
+### Model C
+\tiny
+```{r echo=FALSE,fig.height=3,fig.width=5}
+plot(residuals(lmodC)[-1],residuals(lmodC)[-length(residuals(lmodC))],
+xlab=expression(epsilon[t-1]),ylab=expression(epsilon[t]),
+pch=13,col="seagreen")
+abline(lm(residuals(lmodC)[-length(residuals(lmodC))]~
+residuals(lmodC)[-1]),lty=2,lwd=2,col="darkblue")
+dwtest(lmodC) 
+```
+
+## Correction for Autocorrelation
+
+### AR(p) Errors and ACF and PACF Plots
+\tiny
+* Assuming **AR(p)** model for the errors, we fitted models for *p=1-20*. None performed satisfactorily i.e. none achieved  stationarity.
+* We look at the **acf** and the **pacf** plots of the residuals of each model to see if $AR(p)$ is indeed a good error model 
+* $AR(p)$ model does not seem to be a good model for the errors.
+
+```{r echo=FALSE}
+par(mfrow=c(3,3))
+acf(residuals(lmodA),main="Model A",col="darkgreen",lwd=2)
+pacf(residuals(lmodA),main="Model A",col="darkgreen",lwd=2)
+acf(residuals(lmodB),main="Model B",col="violet",lwd=3)
+pacf(residuals(lmodB),main="Model B",col="violet",lwd=3)
+acf(residuals(lmodC),main="Model C",col="darkblue",lwd=2)
+pacf(residuals(lmodC),main="Model C",col="darkblue",lwd=2)
+```
+
+### Model A
+\tiny
+
+* we use the **auto.arima** function in the **forecast** package in **R** that automatically fits an **ARIMA(p,d,q)** process by taking that value of **d** such that **stationarity is achieved** and **p** and **q** are chosen so that minimum **AIC** is achieved.
+
+```{r echo=FALSE,message=FALSE}
+library(forecast)
+(modelA<-auto.arima(y=(ozone[c(1:300),1]^lambdaA-1)/lambdaA,
+xreg=model.matrix(lmodA)[,-1],
+max.p=7,max.q=7,max.d=7))
+modA<-arima(x=(ozone[c(1:300),1]^lambdaA-1)/lambdaA,
+xreg=model.matrix(lmodA)[,-1],
+order=c(0,1,2))
+cat("The R^2 value of modA is : ",cor(as.vector(fitted(modA)), (ozone[c(1:300), 1]^lambdaA - 1)/lambdaA)^2)
+``` 
+### Remarks for Model A, B and C
+
+* In model **A**,  an **ARIMA(0,1,2)** model is fitted.
+* We do not take any remedial measure for model **B** and **C** as the problem then becomes too complicated.
+* Possibly better models may be fitted after a course on *Time Series Analysis*.
+
+# Prediction
+\tiny
+* based on the **RMSE values**, model **A** performs best
+* model **B** is a close competitor. 
+* Model **C** performs comparatively poor - a model without autocorrelation correction may be a reason.
+
+```{r echo=FALSE}
+layout(matrix(c(1,2,3,4,5,5), ncol=2, byrow=TRUE), heights=c(2,2,1))
+y<-ozone[301:330,1]
+y_pred<-predict(lmod0,ozone[301:330,-1],type="response")
+plot(y,type="o",col="red",lwd=2,ylim=c(-4,20),main="Model 0",sub="RMSE=4.27458")
+lines(y_pred,col="blue",type="o",lwd=2)
+y<-ozone[301:330,1]
+y<-(y^lambdaA-1)/lambdaA
+y_pred<-as.vector(predict(modA,
+newxreg=ozone[301:330,c(4,5,6,9)])[[1]])
+plot(y,type="o",col="red",ylim=c(0,5),lwd=2,main="Model A",sub="RMSE=0.8272072")
+lines(y_pred,col="blue",type="o",lwd=2)
+y<-ozone[301:330,1]
+y<-(y^lambdaB-1)/lambdaB
+y_pred<-predict(lmodB,ozone[301:330,-1],
+type="response")
+plot(y,type="o",col="red",ylim=c(0,5),lwd=2,main="Model B",sub="RMSE=0.883063")
+lines(y_pred,col="blue",type="o",lwd=2)
+y<-ozone[301:330,1]
+y<-(y^lambdaC-1)/lambdaC
+PCR<-pcr((O3^lambdaC-1)/lambdaC~.,data=ozone[1:300,],
+scale=TRUE,ncomp=1)
+y_pred<-predict(PCR,ozone[301:330,-1])
+plot(y,type="o",col="red",ylim=c(0,5),lwd=2,main="Model C",sub="RMSE=1.25652")
+lines(y_pred,col="blue",type="o",lwd=2)
+plot.new()
+legend("center",horiz=TRUE,legend=c("original","predicted"),col=c("red","blue"),
+       lwd=c(2,2),pch=c(16,16))
+```
+
+# Alternating Conditonal Expectation
+
+### Optimal Transformations
+```{r echo=FALSE}
+data(ozone,package="faraway")
+ozone<-data.frame(ozone[,-10],"day"=ozone[,10]%%365+1)
+ozone<-as.data.frame(rbind(ozone[307:330,],ozone[1:306,]))
+library(acepack) 
+final<-ace(x=as.matrix(ozone[1:300,-1]),
+y=ozone[1:300,1]) 
+Data<-data.frame(O3=final$ty,final$tx)
+par(mfrow=c(2,5))
+for (i in 1:10) plot(ozone[1:300,i],
+Data[,i],col=i,xlab="Original",ylab="Optimal Transform",main=names(Data)[i])
+```
+
+### ACE Model and Summary
+
+\tiny
+```{r echo=FALSE}
+lmod<-lm(O3~.,data=Data) 
+summary(lmod)
+```
+
+### Prediction based on ACE Model
+
+\tiny
+```{r echo=FALSE,fig.height=3.5,fig.width=6}
+final2 <- ace(x=as.matrix(ozone[301:330,-1]),y=ozone[301:330,1]) 
+New <- data.frame(final2$tx) 
+y_pred<-as.vector(predict(lmod,newdata=New,type="response")) 
+plot(final2$ty,type="o",col="red",ylim=c(-2,2.5),lwd=2,sub="RMSE=0.4516001",ylab="y") 
+lines(y_pred,type="o",col="blue",lwd=2)
+legend("topright",legend=c("original","predicted"),lwd=c(2,2), pch=c(16,16), col=c("red","blue"))
+```
+
+### Final ACE Model
+\tiny
+* we have seen that **ibt** and **temp** are almost perfectly correlated and **vh** showed a similar relationship with either of them.
+* We again fit a linear model, **Ace**, based on the transformed data, removing **ibt** and **vh**. 
+
+```{r echo=FALSE,fig.height=3.5,fig.width=6}
+final<-ace(x=as.matrix(ozone[1:300,-c(1,2,8)]),
+y=ozone[1:300,1]) 
+Data<-data.frame(O3=final$ty,final$tx)
+Ace<-lm(O3~.,data=Data) 
+final2 <- ace(x=as.matrix(ozone[301:330,-c(1,2,8)]),
+y=ozone[301:330,1]) 
+New <- data.frame(final2$tx) 
+y_pred<-as.vector(predict(Ace,newdata=New,type="response"))
+plot(final2$ty,type="o",col="red",ylim=c(-2,2.5),lwd=2,sub="RMSE=0.3132212",ylab="y") 
+lines(y_pred,type="o",col="blue",lwd=2)
+legend("topright",legend=c("original","predicted"),col=c("red","blue"),pch=c(16,16),lwd=c(2,2))
+cat("The R-squared value of the final model is: ",summary(Ace)$r.squared)
+```
+
+# Conclusion
+\tiny
+* with **Model 0** as baseline, the $R^2$ value and the **RMSE** value of **Model 0**, **Model A**, **Model B**, **Model C** and **ACE** model are compared.
+
+|Model type    |Model Name|$R^2$ |RMSE  |
+|:------------:|:--------:|:----:|:----:|
+|Parametric    |  Model 0 |0.6986|4.2745|
+|              |  Model A |0.7662|0.8272|
+|              |  Model B |0.7202|0.8830|
+|              |  Model C |0.7077|1.2565|
+|Non-Parametric|    ACE   |0.8271|0.3132|
+
+* Among the **parametric models**, **model A** has the **highest** $R^2$ value as well as the **lowest** $RMSE$ value. 
+* All models - **A**, **B** and **C** are better than the baseline model **Model 0**. This validates our corrections for **multicollinearity**, **heteroscedasticity** and **autocorrelation** and **variable selection**.
+* Simple **non-parametric models** are better if the problem of prediction is to be solved. But here, the **ACE** model transforms the data so that maximum $R^2$ can be achieved. And, as expected it has the **highest** $R^2$ value and the **lowest** $RMSE$ value amond all the models.
+* So among the models considered here, **ACE** model is the **best**, both for the problem of prediction and for the purpose of explaining **ozone concentration** by the **meteorological** variables based on the **ozone** dataset.
+
+* The entire project along with source code is available at : [*https://github.com/ArkaB-DS/Modelling-linear-relationship-between-Ozone-Concentration-and-Meteorology-LA-Basin-1976*](https://github.com/ArkaB-DS/Modelling-linear-relationship-between-Ozone-Concentration-and-Meteorology-LA-Basin-1976)  
+
+### Bibliography
+
+\tiny
+  1. Leo Breiman & Jerome H. Friedman (1985): Estimating Optimal Transformations for Multiple Regression and
+Correlation, Journal of the American Statistical Association, 80:391, 580-598
+  2. Jolliffe, Ian T. (1982). "A note on the Use of Principal Components in Regression". Journal of the Royal Statistical Society, Series C. 31 (3): 300–303. doi:10.2307/2348005. JSTOR 2348005.
+  3. Sung H. Park (1981). "Collinearity and Optimal Restrictions on Regression Parameters for Estimating Responses". Technometrics. 23 (3): 289–295. doi:10.2307/1267793.
+  4. Wilkinson, L., & Dallal, G.E. (1981). Tests of significance in forward selection regression with an F-to enter stopping rule. Technometrics, 23, 377–380
+  5. Akaike, H. (1973), "Information theory and an extension of the maximum likelihood principle", in Petrov, B. N.; Csáki, F. (eds.), 2nd International Symposium on Information Theory, Tsahkadsor, Armenia, USSR, September 2-8, 1971, Budapest: Akadémiai Kiadó, pp. 267–281. Republished in Kotz, S.; Johnson, N. L., eds. (1992), Breakthroughs in Statistics, I, Springer-Verlag, pp. 610–624.
+  6. Akaike, H. (1974), "A new look at the statistical model identification", IEEE Transactions on Automatic Control, 19 (6): 716–723, doi:10.1109/TAC.1974.1100705, MR 0423716.
+  7. Shapiro, S. S.; Wilk, M. B. (1965). "An analysis of variance test for normality (complete samples)". Biometrika. 52 (3–4): 591–611. doi:10.1093/biomet/52.3-4.591. JSTOR 2333709. MR 0205384. p. 593
+  8. Breusch, T. S.; Pagan, A. R. (1979). "A Simple Test for Heteroskedasticity and Random Coefficient Variation". Econometrica. 47 (5): 1287–1294. doi:10.2307/1911963. JSTOR 1911963. MR 0545960.
+  9. Box, George E. P.; Cox, D. R. (1964). "An analysis of transformations". Journal of the Royal Statistical Society, Series B. 26 (2): 211–252. JSTOR 2984418. MR 0192611.
+  10. Durbin, J.; Watson, G. S. (1950). "Testing for Serial Correlation in Least Squares Regression, I". Biometrika. 37 (3–4): 409–428. doi:10.1093/biomet/37.3-4.409. JSTOR 2332391
+  11. Durbin, J.; Watson, G. S. (1951). "Testing for Serial Correlation in Least Squares Regression, II". Biometrika. 38 (1–2): 159–179. doi:10.1093/biomet/38.1-2.159. JSTOR 2332325
+  12. Faraway, J.J. (2004). Linear Models with R (1st ed.). Chapman and Hall/CRC. https://doi.org/10.4324/9780203507278
+  13. Hoerl, A. E., Kennard, R. W. and Baldwin, K. F. (1975). Ridge regression: Some simulations.
+Communications in Statistics-Theory and Methods, 4(2), 105-123. 
