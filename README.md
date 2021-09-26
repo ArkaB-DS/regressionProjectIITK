@@ -1,7 +1,9 @@
 # Modelling-linear-relationship-between-Ozone-Concentration-and-Meteorology-LA-Basin-1976
-This repo is for a group project for MTH416A : Regression Analysis at IIT Kanpur
 
-## Group Members : 
+>**COURSE** - *MTH416A : Regression Analysis* (IIT Kanpur)
+>**GUIDE** - *Dr. Sharmishtha Mitra*
+
+## Project Members : 
   - [Arkajyoti Bhattacharjee](https://github.com/ArkaB-DS)
   - [Vishweshwar Tyagi](https://github.com/vishweshwartyagi)
   - [Saurab Jain](https://github.com/jnsaurab)
