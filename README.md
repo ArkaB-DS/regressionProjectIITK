@@ -1,9 +1,11 @@
+# regressionProjectIITK
+
 > This repo is for a group project for the course **MTH416A : Regression Analysis** during the academic session 2021-2022 (even semester) at IIT Kanpur.
 
 ## Project Title:
 
 **`Ozone concentration and meteorology in the LA Basin, 1976 - A Regression Study`** [[_Report_]](https://github.com/ArkaB-DS/regressionProjectIITK/blob/main/Report/Project_Report.pdf)       [[_Presentation_]](https://github.com/ArkaB-DS/regressionProjectIITK/blob/main/Presentation/Project_PPT.pdf) 
-# Project Guide
+## Project Guide
 
 [**_Prof. Sharmishtha Mitra_**](http://home.iitk.ac.in/~smitra/), Department of Mathematics and Statistics, IIT Kanpur
 
@@ -15,33 +17,36 @@
 
 ## Project Outline
 
-|Setup|Topic|
+|**Setup**|**Topic**|
 |-----|-----|
 |     |1. Introduction|
 |     |2. Data Description|
 |     |3. Exploratory Data Analysis|
-|Parametric|4. Multicollinearity |
-|| Detection:<ul><li> Eigen-decompostion Proportion</li></ul> <ul><li> Variance Inflation Factor</li></ul>Remedy: <ul><li> Variable Drop (Model A)</li></ul><ul><li> Ridge Regression (Model B)</li></ul><ul><li> Principal Components Regression (Model C)</li></ul>|
+|_**Parametric**_|4. Multicollinearity |
+|| _Detection:_ <ul><li> Eigen-decompostion Proportion</li></ul> <ul><li> Variance Inflation Factor</li></ul> _Remedy:_ <ul><li> Variable Drop (Model A)</li></ul><ul><li> Ridge Regression (Model B)</li></ul><ul><li> Principal Components Regression (Model C)</li></ul>|
 |          |5. Variable Selection|
-||Selection Methods: <ul><li> Best Subset Selection</li></ul> <ul><li> Mallow's Cp</li></ul><ul><li> Adjusted $R^2$</li></ul><ul><li> AIC vs p Plot</li></ul><ul><li> Scree Plot and Validation Plot</li></ul>
+| _Selection Methods:_ <ul><li> Best Subset Selection</li></ul> <ul><li> Mallow's Cp</li></ul><ul><li> Adjusted $R^2$</li></ul><ul><li> AIC vs p Plot</li></ul><ul><li> Scree Plot and Validation Plot</li></ul>
 |          |6. Heteroscedasticity of Errors|
+|          |_Detection:_ <ul><li> Breusch-Pagan Test</li></ul>_Remedy:_<ul><li> Box-Cox Transformation</li></ul>|
 |          |7. Normality of Errors|
+|          |_Detection:_ <ul><li> Q-Q Plot</li></ul><ul><li> Shapiro-Wilks Test</li></ul>|
 |          |8. Autocorrelation|
+|          |_Detection:_ <ul><li> $\epsilon_t$ vs. $\epsilon_{t-1}$ Plot</li></ul><ul><li> Durbin-Watson Test</li></ul>_Remedy:_<ul><li> ARIMA Fitting</li></ul>|
 |          | 9. Prediction |
-|Nonparametric| 10. Alternating Conditional Expectation (ACE)|
+|_**Nonparametric**_| 10. Alternating Conditional Expectation (ACE)<ul><li>Optimal Transformations Plot</li></ul>|
 |             | 11. Final Model Fit and Predictions |
 
-## Final Model Fit and Predictions:
+## Summary of Fitted Models:
 
-|Model type    |Model Name|$R^2$ |RMSE  |
+|**Model Type**    |**Model Name**|**$R^2$** |**RMSE**  |
 |:------------:|:--------:|:----:|:----:|
-|Parametric    |  Model 0 |0.6986|4.2745|
+|_**Parametric**_    |  Model 0 |0.6986|4.2745|
 |              |  Model A |0.7662|0.8272|
 |              |  Model B |0.7202|0.8830|
 |              |  Model C |0.7077|1.2565|
-|Non-Parametric|    ACE   |0.8271|0.3132|
+|_**Non-Parametric**_|    ACE   |0.8271|0.3132|
 
-## Conclusions
+## Conclusions:
 
 * Among the **parametric models**, **model A** has the **highest** $R^2$ value as well as the **lowest** $RMSE$ value. 
 * All models - **A**, **B** and **C** are better than the baseline model **Model 0**. This validates our corrections for **multicollinearity**, **heteroscedasticity** and **autocorrelation** and **variable selection**.
