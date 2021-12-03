@@ -25,7 +25,7 @@
 |_**Parametric**_|4. Multicollinearity |
 || _Detection:_ <ul><li> Eigen-decompostion Proportion</li></ul> <ul><li> Variance Inflation Factor</li></ul> _Remedy:_ <ul><li> Variable Drop (Model A)</li></ul><ul><li> Ridge Regression (Model B)</li></ul><ul><li> Principal Components Regression (Model C)</li></ul>|
 |          |5. Variable Selection|
-| _Selection Methods:_ <ul><li> Best Subset Selection</li></ul> <ul><li> Mallow's Cp</li></ul><ul><li> Adjusted $R^2$</li></ul><ul><li> AIC vs p Plot</li></ul><ul><li> Scree Plot and Validation Plot</li></ul>
+|          | _Selection Methods:_ <ul><li> Best Subset Selection</li></ul> <ul><li> Mallow's Cp</li></ul><ul><li> Adjusted $R^2$</li></ul><ul><li> AIC vs p Plot</li></ul><ul><li> Scree Plot and Validation Plot</li></ul>
 |          |6. Heteroscedasticity of Errors|
 |          |_Detection:_ <ul><li> Breusch-Pagan Test</li></ul>_Remedy:_<ul><li> Box-Cox Transformation</li></ul>|
 |          |7. Normality of Errors|
