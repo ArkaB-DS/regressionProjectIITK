@@ -44,7 +44,7 @@
 |              |  Model A |0.7662|0.8272|
 |              |  Model B |0.7202|0.8830|
 |              |  Model C |0.7077|1.2565|
-|_**Non-Parametric**_|    ACE   |0.8271|0.3132|
+|_**Nonparametric**_|    ACE   |0.8271|0.3132|
 
 ## Conclusions:
 
