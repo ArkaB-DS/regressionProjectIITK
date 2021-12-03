@@ -1,7 +1,11 @@
-# Modelling-linear-relationship-between-Ozone-Concentration-and-Meteorology-LA-Basin-1976
+> This repo is for a group project for the course **MTH416A : Regression Analysis** during the academic session 2021-2022 (even semester) at IIT Kanpur.
 
->**COURSE** - *MTH416A : Regression Analysis* (IIT Kanpur)
->**GUIDE** - *Dr. Sharmishtha Mitra*
+## Project Title:
+
+**`Ozone concentration and meteorology in the LA Basin, 1976 - A Regression Study`** [[_Report_]](https://github.com/ArkaB-DS/regressionProjectIITK/blob/main/Report/Project_Report.pdf)       [[_Presentation_]](https://github.com/ArkaB-DS/regressionProjectIITK/blob/main/Presentation/Project_PPT.pdf) 
+# Project Guide
+
+[**_Prof. Sharmishtha Mitra_**](http://home.iitk.ac.in/~smitra/), Department of Mathematics and Statistics, IIT Kanpur
 
 ## Project Members : 
   - [Arkajyoti Bhattacharjee](https://github.com/ArkaB-DS)
@@ -9,65 +13,22 @@
   - [Saurab Jain](https://github.com/jnsaurab)
   - Apoorva Singh
 
+## Project Outline
 
-## Tentative Plan for the Project :
+|Setup|Topic|
+|-----|-----|
+|     |1. Introduction|
+|     |2. Data Description|
+|     |3. Exploratory Data Analysis|
+|Parametric|4. Multicollinearity|
+|          |5. Variable Selection|
+|          |6. Heteroscedasticity of Errors|
+|          |7. Normality of Errors|
+|          |8. Autocorrelation|
+|          | 9. Prediction |
+|Nonparametric| 10. Alternating Conditional Expectation|
+|             | 11. Final Model Fit and Predictions |
 
-0. Preliminaries :
-    - structure of the data-set 
-    - summary of the data-set
-    - Fitting a linear model with all the variables and summarize (**Model 0**)
-    - Scatterplot Matrix
-    - Basic Plots based on **Model 0**
-1. Outliers (O) and Influential Points (IP) : [omitted]
-     + Detection :
-        -  Cooks Distance (IP)
-        -  DFFITs (IP)
-        -  Hat Values (O)
-        -  Studentized Residuals (O)
-     + Remedy : 
-2. Multicollinearity :
-     + Detection :
-       - Scatterplot Matrix
-       - Variance Inflation Factor (VIF)
-       - Variance Decompostion Proportion
-     + Remedy :
-       - Dropping variables (**Model A**)
-       - Ridge Regression (**Model B**)
-       - Principal Component Regression (**Model C**)
-       - LASSO (**Model D** - *BONUS*) [omitted]
-       - Elastic Net (**Model E** - *BONUS*) [omitted]
-3. Variable Selection :
-     - Plot AIC vs P
-     - Exhaustive Search
-     - Mallow's Cp Criterion
-     - Stepwise Selection
-4. Homoscedasticity of Errors :
-     + Detection :
-         - Residual vs Fitted Plot
-         - Goldfeld-Quandt Test (*optional*) [omitted]
-         - Glejser Test (*optional*) [omitted]
-         - Breusch-Pagan Test
-     + Remedy :
-         - Box-Cox Transformation
-         - Generalized Least Squares [omitted]
-5. Normality of Errors :
-     + Detection :
-         - Q-Q Plot
-         - Shapiro-Wilks Test
-6. Autocorrelation :
-     + Detection :
-         -  $\epsilon_t$ vs $\epsilon_{t-1}$ plot
-         - Durbin-Watson Test
-     + Remedy :
-         - Assume AR(1) model for errors and estimate AR parameter $\rho$ using -[omitted]
-              * Cochrane-Orcutt Method
-              * Prais-Winsten Method
-         - Used *auto.arima* function in R to fit an ARIMA(0,1,2) model for model A
-         - model B and C were not auto-correlation corrected 
- 7. Prediction :       
-     + Compare the models A, B and C based on RMSE with model 0 as baseline model
- 
- 8. * Apply **Alternating Conditional Expectation(ACE)** algorithm on the **ozone** dataset and repeat all steps 0 through 7, whatever is applicable.
- 
- ### BONUS :
-  * Apply **Multivariate Adaptive Regression Splines(MARS)** algorithm on the **ozone** dataset and repeat all steps 0 through 7, whatever is applicable. [omitted]
+## Final Model Fit and Predictions:
+
+## Key References:
